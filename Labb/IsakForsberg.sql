@@ -1,4 +1,5 @@
 -- Databaser Labb - Isak Forsberg
+-- G- och VG-uppgifter
 
 USE everyloop
 
@@ -33,7 +34,7 @@ UPDATE
 SET
 	Operator = TRIM(Operator)
 WHERE
-	Operator LIKE '[ ]%';
+	Operator LIKE ' %';
 
 SELECT
 	*
@@ -57,6 +58,20 @@ ORDER BY
 	Operator, [Mission count];
 
 
+-- Uppgift 4
+
+UPDATE
+	SuccessfulMissions
+SET
+	Spacecraft = TRIM(SUBSTRING(Spacecraft, 1, CHARINDEX(' (', Spacecraft)))
+WHERE
+	Spacecraft LIKE '% (%';
+
+SELECT
+	*
+FROM
+	SuccessfulMissions;
+
 
 -- Users
 
@@ -77,7 +92,7 @@ FROM
 SELECT
 	*
 FROM
-	NewUsers
+	NewUsers;
 
 
 -- Uppgift 6
@@ -92,7 +107,7 @@ GROUP BY
 HAVING
 	COUNT(*) > 1
 ORDER BY
-	UserName
+	UserName;
 
 
 -- Uppgift 7
@@ -152,6 +167,17 @@ WHERE
 	ID = '971203-2391';
 
 
+-- Uppgift 10
+
+SELECT
+	Gender,
+	AVG(FLOOR(DATEDIFF(DAY, SUBSTRING(ID, 1, 6), GETDATE()) / 365.25)) AS [Average Age]
+FROM
+	NewUsers
+GROUP BY
+	Gender;
+
+
 -- Company
 
 -- Uppgift 11
@@ -187,3 +213,17 @@ FROM
 	EmployeeRegion er
 GROUP BY
 	er.RegionDescription;
+
+
+-- Uppgift 13
+
+SELECT
+	a.Id,
+	CONCAT_WS(' ', a.TitleOfCourtesy, a.FirstName, a.LastName) AS Name,
+	CASE
+		WHEN a.ReportsTo IS NULL THEN 'Nobody!'
+		ELSE CONCAT_WS(' ', b.TitleOfCourtesy, b.FirstName, b.LastName)
+	END AS ReportsTo
+FROM
+	company.employees a
+	LEFT JOIN company.employees b ON a.ReportsTo = b.Id;
